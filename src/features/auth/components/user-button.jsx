@@ -1,13 +1,13 @@
-"use-client";
+"use client";
 
-import { Avatar, AvatarFallback } from "@components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { DottedSeparator } from "@/components/dotted-separator";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { DottedSeparator } from "@/components/ui/dotted-separator";
 import { useLogout } from "@/features/auth/api/use-logout";
 import { useCurrent } from "../api/use-current";
 import { Loader, LogOut } from "lucide-react";
@@ -28,9 +28,10 @@ export const UserButton = () => {
   }
 
   const { name, email } = user;
-  const avatarFallback = nam
-    ? name.CharAt(0).toUpperCase()
-    : email.CharAt(0).toUpperCase() ?? "U";
+
+  const avatarFallback = name 
+    ? name.charAt(0).toUpperCase()
+    : email.charAt(0).toUpperCase() ?? "U";
 
   return (
     <DropdownMenu modal={false}>
