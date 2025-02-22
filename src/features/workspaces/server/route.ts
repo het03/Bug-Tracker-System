@@ -2,16 +2,38 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { createWorkspaceSchema } from "../schemas";
 import { sessionMiddleware } from "@/lib/session-middleware";
-import { DATABASES_ID, IMAGES_BUCKET_ID, WORKSPACES_ID } from "@/config";
-import { ID } from "node-appwrite";
+
+import {
+  DATABASES_ID,
+  IMAGES_BUCKET_ID,
+  MEMBERS_ID,
+  WORKSPACES_ID,
+} from "@/config";
+
+import { ID, Query } from "node-appwrite";
+import { MemberRole } from "@/features/members/types";
+import { generateInviteCode } from "@/lib/utils";
 
 const app = new Hono()
-  .get("/", sessionMiddleware, async (c) => {
-    const databses = c.get("databases");
 
-    const workspaces = await databses.listDocuments(
+  .get("/", sessionMiddleware, async (c) => {
+    const user = c.get("user");
+    const databases = c.get("databases");
+
+    const members = await databases.listDocuments(DATABASES_ID, MEMBERS_ID, [
+      Query.equal("userId", user.$id),
+    ]);
+
+    if (members.total === 0) {
+      return c.json({ data: { documents: [], total: 0 } });
+    }
+
+    const workspaceIds = members.documents.map((member) => member.workspaceId);
+
+    const workspaces = await databases.listDocuments(
       DATABASES_ID,
-      WORKSPACES_ID
+      WORKSPACES_ID,
+      [Query.orderDesc("$createdAt"), Query.contains("$id", workspaceIds)]
     );
 
     return c.json({ data: workspaces });
@@ -22,7 +44,7 @@ const app = new Hono()
     zValidator("form", createWorkspaceSchema),
     sessionMiddleware,
     async (c) => {
-      const databses = c.get("databases");
+      const databases = c.get("databases");
       const storage = c.get("storage");
       const user = c.get("user");
 
@@ -47,12 +69,24 @@ const app = new Hono()
         ).toString("base64")}`;
       }
 
-      const workspace = await databses.createDocument(
+      const workspace = await databases.createDocument(
         DATABASES_ID,
         WORKSPACES_ID,
         ID.unique(),
-        { name, userId: user.$id, imageUrl: uploadedImageUrl }
+        {
+          name,
+          userId: user.$id,
+          imageUrl: uploadedImageUrl,
+          inviteCode: generateInviteCode(6),
+        }
       );
+
+      await databases.createDocument(DATABASES_ID, MEMBERS_ID, ID.unique(), {
+        userId: user.$id,
+        workspaceId: workspace.$id,
+        role: MemberRole.ADMIN,
+      });
+
       return c.json({ data: workspace });
     }
   );
