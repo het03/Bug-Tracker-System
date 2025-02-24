@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     "src/app/(dashboard)/page.tsx",
     "src/features/auth/components/user-button.tsx"
-  ],
+, "next.config.js"  ],
   "exclude": ["node_modules"]
 }
