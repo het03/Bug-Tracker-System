@@ -45,7 +45,7 @@ export const EditWorkspaceForm = ({
   const { mutate: deleteWorkspace, isPending: isDeletingWorkspace } =
     useDeleteWorkspace();
 
-  const { mutate: resetInviteCode, isPending: isResettingInviteCoed } =
+  const { mutate: resetInviteCode, isPending: isResettingInviteCode } =
     useResetInviteCode();
 
   const [DeleteDialog, confirmDelete] = useConfirm(
@@ -142,6 +142,7 @@ export const EditWorkspaceForm = ({
     <div className="flex flex-col gap-y-4">
       <DeleteDialog />
       <ResetDialog />
+
       <Card className="w-full h-full border-none shadow-none">
         <CardHeader className="flex flex-row items-center gap-x-4 p-7 space-y-0">
           <Button
@@ -297,7 +298,7 @@ export const EditWorkspaceForm = ({
               size="sm"
               variant="destructive"
               type="button"
-              disabled={isPending || isResettingInviteCoed}
+              disabled={isPending || isResettingInviteCode}
               onClick={handleResetInviteCode}
             >
               Reset invite link
