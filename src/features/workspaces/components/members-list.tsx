@@ -8,13 +8,13 @@ import { ArrowLeft, MoreVerticalIcon } from "lucide-react";
 import Link from "next/link";
 import { useGetMembers } from "@/features/members/api/use-get-members";
 import { MemberAvatar } from "@/features/members/components/member-avatar";
-import { Separator } from "@radix-ui/react-dropdown-menu";
+import { Separator } from "@/components/ui/separator";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 import { useDeleteMember } from "@/features/members/api/use-delete-member";
 import { useUpdateMember } from "@/features/members/api/use-update-member";
 import { MemberRole } from "@/features/members/types";
