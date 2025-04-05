@@ -1,13 +1,11 @@
 import { getCurrent } from "@/features/auth/queries";
 import { redirect } from "next/navigation";
-import { WorkspaceIdClient } from "./client";
+import { TaskIdClient } from "./client";
 
-const WorkspaceIdPage = async () => {
+const TaskIdPage = async () => {
   const user = await getCurrent();
-
   if (!user) redirect("/sign-in");
-
-  return <WorkspaceIdClient />;
+  return <TaskIdClient />;
 };
 
-export default WorkspaceIdPage;
+export default TaskIdPage;

@@ -16,4 +16,5 @@ export type Task = Models.Document & {
   dueDate: string;
   postion: number;
   workspaceId: string;
+  descripton?: string;
 };
