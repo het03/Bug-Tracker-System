@@ -12,12 +12,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
-} from "@/components/ui/select"
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { DottedSeparator } from "@/components/dotted-separator";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,6 @@ import { DatePicker } from "@/components/date-picker";
 import { MemberAvatar } from "@/features/members/components/member-avatar";
 import { TaskStatus } from "../types";
 import { ProjectAvatar } from "@/features/projects/components/project-avatar";
-
 
 interface CreateTaskFormProps {
   onCancel?: () => void;
@@ -45,13 +44,14 @@ interface CreateTaskFormProps {
   }[];
 }
 
-export const CreateTaskForm = ({ onCancel, projectOptions, memberOptions }: CreateTaskFormProps) => {
+export const CreateTaskForm = ({
+  onCancel,
+  projectOptions,
+  memberOptions,
+}: CreateTaskFormProps) => {
   const workspaceId = useWorkspaceId();
 
-  const router = useRouter();
-
   const { mutate, isPending } = useCreateTask();
-
 
   const form = useForm<z.infer<typeof createTasksSchema>>({
     resolver: zodResolver(createTasksSchema.omit({ workspaceId: true })),
@@ -61,25 +61,21 @@ export const CreateTaskForm = ({ onCancel, projectOptions, memberOptions }: Crea
   });
 
   const onSubmit = (values: z.infer<typeof createTasksSchema>) => {
-
     mutate(
-      { json: {...values, workspaceId} },
+      { json: { ...values, workspaceId } },
       {
         onSuccess: () => {
           form.reset();
-            onCancel?.();
+          onCancel?.();
         },
       }
     );
   };
 
-
   return (
     <Card className="w-full h-full border-none shadow-none">
       <CardHeader className="flex p-7">
-        <CardTitle className="text-xl font-bold">
-          Create a new Task
-        </CardTitle>
+        <CardTitle className="text-xl font-bold">Create a new Task</CardTitle>
       </CardHeader>
       <div className="px-7 ">
         <DottedSeparator />
@@ -108,7 +104,7 @@ export const CreateTaskForm = ({ onCancel, projectOptions, memberOptions }: Crea
                   <FormItem>
                     <FormLabel>Due Date</FormLabel>
                     <FormControl>
-                        <DatePicker {...field}/>
+                      <DatePicker {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -121,28 +117,28 @@ export const CreateTaskForm = ({ onCancel, projectOptions, memberOptions }: Crea
                   <FormItem>
                     <FormLabel>Assignee</FormLabel>
                     <Select
-                        defaultValue={field.value}
-                        onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      onValueChange={field.onChange}
                     >
-                    <FormControl>
+                      <FormControl>
                         <SelectTrigger>
-                            <SelectValue placeholder="Select assignee"/>
+                          <SelectValue placeholder="Select assignee" />
                         </SelectTrigger>
-                    </FormControl>
-                    <FormMessage />
-                    <SelectContent>
+                      </FormControl>
+                      <FormMessage />
+                      <SelectContent>
                         {memberOptions.map((member) => (
-                            <SelectItem key={member.id} value={member.id}>
-                                <div className="flex items-center gap-x-2">
-                                    <MemberAvatar
-                                        className="size-6"
-                                        name={member.name}
-                                    />
-                                    {member.name}
-                                </div>
-                            </SelectItem>
+                          <SelectItem key={member.id} value={member.id}>
+                            <div className="flex items-center gap-x-2">
+                              <MemberAvatar
+                                className="size-6"
+                                name={member.name}
+                              />
+                              {member.name}
+                            </div>
+                          </SelectItem>
                         ))}
-                    </SelectContent>
+                      </SelectContent>
                     </Select>
                     <FormMessage />
                   </FormItem>
@@ -155,32 +151,28 @@ export const CreateTaskForm = ({ onCancel, projectOptions, memberOptions }: Crea
                   <FormItem>
                     <FormLabel>Status</FormLabel>
                     <Select
-                        defaultValue={field.value}
-                        onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      onValueChange={field.onChange}
                     >
-                    <FormControl>
+                      <FormControl>
                         <SelectTrigger>
-                            <SelectValue placeholder="Select status"/>
+                          <SelectValue placeholder="Select status" />
                         </SelectTrigger>
-                    </FormControl>
-                    <FormMessage />
-                    <SelectContent>
+                      </FormControl>
+                      <FormMessage />
+                      <SelectContent>
                         <SelectItem value={TaskStatus.BACKLOG}>
-                            Backlog
+                          Backlog
                         </SelectItem>
                         <SelectItem value={TaskStatus.IN_PROGRESS}>
-                            In Progress
+                          In Progress
                         </SelectItem>
                         <SelectItem value={TaskStatus.IN_REVIREW}>
-                            In Review
+                          In Review
                         </SelectItem>
-                        <SelectItem value={TaskStatus.TODO}>
-                            Todo
-                        </SelectItem>
-                        <SelectItem value={TaskStatus.DONE}>
-                            Done
-                        </SelectItem>
-                    </SelectContent>
+                        <SelectItem value={TaskStatus.TODO}>Todo</SelectItem>
+                        <SelectItem value={TaskStatus.DONE}>Done</SelectItem>
+                      </SelectContent>
                     </Select>
                     <FormMessage />
                   </FormItem>
@@ -193,29 +185,29 @@ export const CreateTaskForm = ({ onCancel, projectOptions, memberOptions }: Crea
                   <FormItem>
                     <FormLabel>Project</FormLabel>
                     <Select
-                        defaultValue={field.value}
-                        onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      onValueChange={field.onChange}
                     >
-                    <FormControl>
+                      <FormControl>
                         <SelectTrigger>
-                            <SelectValue placeholder="Select project"/>
+                          <SelectValue placeholder="Select project" />
                         </SelectTrigger>
-                    </FormControl>
-                    <FormMessage />
-                    <SelectContent>
+                      </FormControl>
+                      <FormMessage />
+                      <SelectContent>
                         {projectOptions.map((project) => (
-                            <SelectItem key={project.id} value={project.id}>
-                                <div className="flex items-center gap-x-2">
-                                    <ProjectAvatar
-                                        className="size-6"
-                                        name={project.name}
-                                        image={project.imageUrl}
-                                    />
-                                    {project.name}
-                                </div>
-                            </SelectItem>
+                          <SelectItem key={project.id} value={project.id}>
+                            <div className="flex items-center gap-x-2">
+                              <ProjectAvatar
+                                className="size-6"
+                                name={project.name}
+                                image={project.imageUrl}
+                              />
+                              {project.name}
+                            </div>
+                          </SelectItem>
                         ))}
-                    </SelectContent>
+                      </SelectContent>
                     </Select>
                     <FormMessage />
                   </FormItem>

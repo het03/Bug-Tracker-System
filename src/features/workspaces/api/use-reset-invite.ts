@@ -3,7 +3,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { InferRequestType, InferResponseType } from "hono";
 
 import { client } from "@/lib/rpc";
-import { useRouter } from "next/navigation";
 
 type ResponseType = InferResponseType<
   (typeof client.api.workspaces)[":workspaceId"]["reset-invite-code"]["$post"],
@@ -24,7 +23,7 @@ export const useResetInviteCode = () => {
         param,
       });
       if (!response.ok) {
-        throw new Error("Somethings went wrong");
+        throw new Error("Failed to reset invite code.");
       }
       return await response.json();
     },
