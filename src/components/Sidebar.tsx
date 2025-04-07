@@ -1,7 +1,7 @@
 import WorkspaceSwitcher from "@/features/workspaces/components/workspace-switcher";
 import DottedSeparator from "./dotted-separator";
-import Navigation from "./navigation";
-import Projects from "./projects";
+import Navigation from "@/components/navigation";
+import Projects from "@/components/projects";
 import Image from "next/image";
 import Link from "next/link";
 
