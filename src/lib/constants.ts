@@ -1,4 +1,4 @@
-export const AUTH_COOKIE_NAME = "jira-clone-auth";
+export const AUTH_COOKIE_NAME = "Bug-Tracker-System-Auth";
 
 export enum QueryKeys {
   WORKSPACES = "workspaces",
