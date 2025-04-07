@@ -1,5 +1,5 @@
-import Navbar from "../../components/navbar";
-import Sidebar from "../../components/sidebar";
+import Navbar from "src/components/navbar";
+import Sidebar from "src/components/sidebar";
 import CreateProjectModel from "@/features/projects/components/create-project-model";
 import CreateTaskModel from "@/features/tasks/components/create-task-model";
 import EditTaskModel from "@/features/tasks/components/edit-task-model";
