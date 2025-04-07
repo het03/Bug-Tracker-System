@@ -4,8 +4,8 @@ import React, { useEffect, useState } from "react";
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { MenuIcon } from "lucide-react";
-import Sidebar from "./sidebar";
 import { usePathname } from "next/navigation";
+import Sidebar from "./sidebar";
 
 const MobileSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
