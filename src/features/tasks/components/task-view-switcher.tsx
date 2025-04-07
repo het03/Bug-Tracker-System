@@ -1,103 +1,115 @@
 "use client";
-import { DottedSeparator } from "@/components/dotted-separator";
+
+import { Loader, PlusIcon } from "lucide-react";
+import { useQueryState } from "nuqs";
+
+import DottedSeparator from "@/components/dotted-separator";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader, PlusIcon } from "lucide-react";
-import { useCreateTaskModal } from "../hooks/use-create-task-modal";
-import { useGetTasks } from "../api/use-get-tasks";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
-import { useQueryState } from "nuqs";
-import { DataFilters } from "./data-filters";
-import { useTaskFilters } from "../hooks/use-task-filters";
-import { DataTable } from "./data-table";
+import { useGetTasks } from "../api/use-get-tasks";
+import { useCreateTaskModel } from "../hooks/use-create-task-model";
+import { useTaskFilter } from "../hooks/use-task-filter";
 import { columns } from "./columns";
-import { DataKanban } from "./data-kanban";
+import DataFilters from "./data-filters";
+import DataKanban from "./data-kanban";
+import { DataTable } from "./data-table";
 import { useCallback } from "react";
 import { TaskStatus } from "../types";
-import { useBulkUpdateTasks } from "../api/use-bulk-update-tasks";
-import { DataCalendar } from "./data-calendar";
+import { useBuildUpdateTask } from "../api/use-bulk-update-task";
+import DataCalender from "./calender/data-calender";
 import { useProjectId } from "@/features/projects/hooks/use-project-id";
 
-interface TaskViewSwitcherProps {
+type TaskViewSwitcherProps = {
   hideProjectFilter?: boolean;
-}
+};
 
-export const TaskViewSwitcher = ({
-  hideProjectFilter,
-}: TaskViewSwitcherProps) => {
-  const paramProjectId = useProjectId();
-  const workspaceId = useWorkspaceId();
-  const { mutate: bulkUpdate } = useBulkUpdateTasks();
-
+const TaskViewSwitcher = ({ hideProjectFilter }: TaskViewSwitcherProps) => {
   const [view, setView] = useQueryState("task-view", {
     defaultValue: "table",
   });
 
-  const [{ status, assigneeId, projectId, dueDate }] = useTaskFilters();
+  const { mutate } = useBuildUpdateTask();
+
+  const [{ projectId, assigneeId, dueDate, search, status }] = useTaskFilter();
+  const workspaceId = useWorkspaceId();
+  const paramsProjectId = useProjectId();
+  const { open } = useCreateTaskModel();
   const { data: tasks, isLoading: isLoadingTasks } = useGetTasks({
     workspaceId,
-    projectId: paramProjectId || projectId,
+    projectId: paramsProjectId || projectId,
     assigneeId,
-    status,
     dueDate,
+    search,
+    status,
   });
-  const { open } = useCreateTaskModal();
 
   const onKanbanChange = useCallback(
-    (tasks: { $id: string; status: TaskStatus; position: number }[]) => {
-      bulkUpdate({ json: { tasks } });
+    (
+      tasks: {
+        $id: string;
+        status: TaskStatus;
+        position: number;
+      }[]
+    ) => {
+      console.log(tasks);
+      mutate({
+        json: { tasks },
+      });
     },
-    [bulkUpdate]
+    [mutate]
   );
-  console.log(tasks);
+
   return (
-    <div>
-      <Tabs
-        className="flex-1 w-full border rounded-lg"
-        defaultValue={view}
-        onValueChange={setView}
-      >
-        <div className="h-full flex flex-col overflow-auto p-4">
-          <div className="flex flex-col gap-y-2 lg:flex-row justify-between items-center">
-            <TabsList className="w-full lg:w-auto">
-              <TabsTrigger className="h-8 w-full lg:w-auto" value="table">
-                Table
-              </TabsTrigger>
-              <TabsTrigger className="h-8 w-full lg:w-auto" value="kanban">
-                Kanban
-              </TabsTrigger>
-              <TabsTrigger className="h-8 w-full lg:w-auto" value="calendar">
-                Calendar
-              </TabsTrigger>
-            </TabsList>
-            <Button onClick={open} size="sm" className="w-full lg:w-auto">
-              <PlusIcon className="mr-2 w-auto" />
-              New task
-            </Button>
-          </div>
-          <DottedSeparator className="my-4" />
-          <DataFilters hideProjectFilter={hideProjectFilter} />
-          <DottedSeparator className="my-4" />
-          {isLoadingTasks ? (
-            <div className="w-full border rounded-lg h-[200px] flex flex-col items-center justify-center">
-              <Loader className="size-5 animate-spin text-muted-foreground" />
-            </div>
-          ) : (
-            <>
-              <TabsContent value="table" className="mt-0">
-                <DataTable columns={columns} data={tasks ?? []} />
-              </TabsContent>
-              <TabsContent value="kanban" className="mt-0">
-                <DataKanban data={tasks ?? []} onChange={onKanbanChange} />
-              </TabsContent>
-              <TabsContent value="calendar" className="mt-0">
-                {/* tasks?.documents doesnt work */}
-                <DataCalendar data={tasks ?? []} />
-              </TabsContent>
-            </>
-          )}
+    <Tabs
+      className="flex-1 w-full rounded-lg border"
+      defaultValue={view}
+      onValueChange={setView}
+    >
+      <div className="h-full flex flex-col overflow-auto p-4">
+        <div className="flex flex-col gap-y-2 lg:flex-row justify-between items-center">
+          <TabsList className="w-full lg:w-auto">
+            <TabsTrigger className="h-8 w-full lg:w-auto" value="table">
+              Table
+            </TabsTrigger>
+            <TabsTrigger className="h-8 w-full lg:w-auto" value="kanban">
+              Kanban
+            </TabsTrigger>
+            <TabsTrigger className="h-8 w-full lg:w-auto" value="calender">
+              Calender
+            </TabsTrigger>
+          </TabsList>
+          <Button size="sm" className="w-full lg:w-auto" onClick={open}>
+            <PlusIcon className="size-4 mr-2" />
+            New
+          </Button>
         </div>
-      </Tabs>
-    </div>
+        <DottedSeparator className="my-4" />
+        <DataFilters hideProjectFilter={hideProjectFilter} />
+        <DottedSeparator className="my-4" />
+        {isLoadingTasks ? (
+          <div className="w-full border rounded-lg h-[200px] flex flex-col items-center justify-center">
+            <Loader className="size-5 animate-spin text-muted-foreground " />
+          </div>
+        ) : (
+          <>
+            <TabsContent value="table" className="mt-0">
+              <DataTable columns={columns} data={tasks?.documents ?? []} />
+            </TabsContent>
+            <TabsContent value="kanban" className="mt-0">
+              <DataKanban
+                data={tasks?.documents ?? []}
+                onChange={onKanbanChange}
+              />
+            </TabsContent>
+            <TabsContent value="calender" className="mt-0 h-full pb-4 ">
+              <DataCalender data={tasks?.documents ?? []} />
+            </TabsContent>
+          </>
+        )}
+      </div>
+    </Tabs>
   );
 };
+
+export default TaskViewSwitcher;

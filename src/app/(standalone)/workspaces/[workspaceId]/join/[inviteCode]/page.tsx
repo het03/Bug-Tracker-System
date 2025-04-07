@@ -1,16 +1,35 @@
-import { getCurrent } from "@/features/auth/queries";
-import { JoinWorkspaceForm } from "@/features/workspaces/components/join-worskspace-form";
+import { getCurrentUser } from "@/features/auth/queries";
+import JoinWorkspaceForm from "@/features/workspaces/components/join-workspace-form";
+import { getWorkspaceInfo } from "@/features/workspaces/queries";
+import { PageWithWorkspaceId } from "@/features/workspaces/types";
 import { redirect } from "next/navigation";
-import { WorkspaceIdJoinClient } from "./client";
+import React from "react";
 
-const WorkspaceIdJoinPage = async () => {
-  const user = await getCurrent();
-
-  if (!user) {
-    return redirect("sign-in");
-  }
-
-  return <WorkspaceIdJoinClient />;
+type JoinWorkspacePageProps = PageWithWorkspaceId & {
+  params: {
+    inviteCode: string;
+  };
 };
 
-export default WorkspaceIdJoinPage;
+const JoinWorkspacePage = async ({
+  params: { workspaceId, inviteCode },
+}: JoinWorkspacePageProps) => {
+  const user = await getCurrentUser();
+  if (!user) redirect("/sign-in");
+
+  const workspace = await getWorkspaceInfo({ workspaceId });
+
+  if (!workspace || !workspace.name) redirect("/");
+
+  return (
+    <div className="w-full lg:max-w-xl">
+      <JoinWorkspaceForm
+        inviteCode={inviteCode}
+        workspaceId={workspaceId}
+        workspaceName={workspace.name}
+      />
+    </div>
+  );
+};
+
+export default JoinWorkspacePage;

@@ -1,30 +1,45 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import { SettingsIcon, UserIcon } from "lucide-react";
-import Link from "next/link";
-import { GoCheck, GoCheckCircleFill, GoHome, GoHomeFill } from "react-icons/go";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
+import { cn } from "@/lib/utils";
+import { Settings, UserIcon } from "lucide-react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  GoCheckCircle,
+  GoCheckCircleFill,
+  GoHome,
+  GoHomeFill,
+} from "react-icons/go";
 
 const routes = [
-  { Label: "Home", href: "", Icon: GoHome, activeIcon: GoHomeFill },
   {
-    Label: "My Tasks",
+    label: "Home",
+    href: "",
+    icon: GoHome,
+    activeIcon: GoHomeFill,
+  },
+  {
+    label: "My Tasks",
     href: "/tasks",
-    Icon: GoCheck,
+    icon: GoCheckCircle,
     activeIcon: GoCheckCircleFill,
   },
-  { Label: "Members", href: "/members", Icon: UserIcon, activeIcon: UserIcon },
   {
-    Label: "Settings",
+    label: "Settings",
     href: "/settings",
-    Icon: SettingsIcon,
-    activeIcon: SettingsIcon,
+    icon: Settings,
+    activeIcon: Settings,
+  },
+  {
+    label: "Members",
+    href: "/members",
+    icon: UserIcon,
+    activeIcon: UserIcon,
   },
 ];
 
-export const Navigation = () => {
+const Navigation = () => {
   const workspaceId = useWorkspaceId();
   const pathname = usePathname();
 
@@ -33,7 +48,7 @@ export const Navigation = () => {
       {routes.map((item) => {
         const fullHref = `/workspaces/${workspaceId}${item.href}`;
         const isActive = pathname === fullHref;
-        const Icon = isActive ? item.activeIcon : item.Icon;
+        const Icon = isActive ? item.activeIcon : item.icon;
         return (
           <Link key={item.href} href={fullHref}>
             <div
@@ -43,7 +58,7 @@ export const Navigation = () => {
               )}
             >
               <Icon className="size-5 text-neutral-500" />
-              {item.Label}
+              {item.label}
             </div>
           </Link>
         );
@@ -51,3 +66,5 @@ export const Navigation = () => {
     </ul>
   );
 };
+
+export default Navigation;

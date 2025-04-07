@@ -1,11 +1,11 @@
+import WorkspaceSwitcher from "@/features/workspaces/components/workspace-switcher";
+import DottedSeparator from "./dotted-separator";
+import Navigation from "./navigation";
+import Projects from "./projects";
 import Image from "next/image";
 import Link from "next/link";
-import { Navigation } from "./Navigation";
-import { DottedSeparator } from "./dotted-separator";
-import { WorkspaceSwitcher } from "./workspace-switcher";
-import { Projects } from "./projects";
 
-export const Sidebar = () => {
+const Sidebar = () => {
   return (
     <aside className="h-full lg:rounded-2xl lg:m-4 bg-neutral-100 p-4">
       <Link href="/">
@@ -20,3 +20,5 @@ export const Sidebar = () => {
     </aside>
   );
 };
+
+export default Sidebar;

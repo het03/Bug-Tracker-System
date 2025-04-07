@@ -1,13 +1,9 @@
 "use client";
 
-import { Loader } from "lucide-react";
+import PageLoader from "@/components/page-loader";
 
-const LoadingPage = () => {
-  return (
-    <div className="h-screen flex flex-col items-center justify-center">
-      <Loader className="size-8 animate-spin text-muted-foreground" />
-    </div>
-  );
+const AuthLoadingPage = () => {
+  return <PageLoader />;
 };
 
-export default LoadingPage;
+export default AuthLoadingPage;

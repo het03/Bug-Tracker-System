@@ -1,13 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
+
+import { QueryKeys } from "@/lib/constants";
 import { client } from "@/lib/rpc";
 
-interface useGetMembersProps {
+type UseGetMembersProps = {
   workspaceId: string;
-}
+};
 
-export const useGetMembers = ({ workspaceId }: useGetMembersProps) => {
+export const useGetMembers = ({ workspaceId }: UseGetMembersProps) => {
   const query = useQuery({
-    queryKey: ["members", workspaceId],
+    queryKey: [QueryKeys.MEMBERS, workspaceId],
     queryFn: async () => {
       const response = await client.api.members.$get({
         query: { workspaceId },
@@ -22,5 +24,6 @@ export const useGetMembers = ({ workspaceId }: useGetMembersProps) => {
       return data;
     },
   });
+
   return query;
 };

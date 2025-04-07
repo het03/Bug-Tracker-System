@@ -1,24 +1,29 @@
 "use client";
-import { PageError } from "@/components/page-error";
-import { PageLoader } from "@/components/page-loader";
+
+import PageLoader from "@/components/page-loader";
 import { useGetWorkspace } from "@/features/workspaces/api/use-get-workspace";
-import { EditWorkspaceForm } from "@/features/workspaces/components/edit-workspace-form";
+import DeleteWorkspaceForm from "@/features/workspaces/components/delete-workspace-form";
+import EditWorkspaceForm from "@/features/workspaces/components/edit-workspace-form";
+import ResetInviteForm from "@/features/workspaces/components/reset-invite-form";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 
-export const WorkspaceSettingsId = () => {
+const WorkspaceSettingsClientPage = () => {
   const workspaceId = useWorkspaceId();
-  const { data: initialValues, isLoading } = useGetWorkspace({ workspaceId });
+  const { data: initialValue, isLoading } = useGetWorkspace({ workspaceId });
 
   if (isLoading) {
     return <PageLoader />;
   }
 
-  if (!initialValues) {
-    return <PageError message="Workspace not found" />;
-  }
+  if (!initialValue) throw new Error("Project not found");
+
   return (
-    <div className="w-full lg:max-w-xl">
-      <EditWorkspaceForm initialValues={initialValues} />
+    <div className="flex flex-col gap-y-4">
+      <EditWorkspaceForm initialValues={initialValue} />
+      <ResetInviteForm initialValues={initialValue} />
+      <DeleteWorkspaceForm workspaceId={workspaceId} />
     </div>
   );
 };
+
+export default WorkspaceSettingsClientPage;

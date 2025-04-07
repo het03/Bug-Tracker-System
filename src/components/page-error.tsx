@@ -1,16 +1,35 @@
+"use client";
+
 import { AlertTriangle } from "lucide-react";
+import Link from "next/link";
 
-interface PageErrorProps {
-  message: string;
-}
+import { Button } from "@/components/ui/button";
 
-export const PageError = ({
-  message = "Something went wrong!  ",
+type PageErrorProps = {
+  message?: string;
+  reset?: () => void;
+};
+
+const PageError = ({
+  message = "Something went wrong",
+  reset,
 }: PageErrorProps) => {
   return (
-    <div className="flex flex-col items-center justify-center h-full">
-      <AlertTriangle className="size-6 text-muted-foreground mb-2" />
-      <p className="text-sm font-medium text-muted-foreground">{message}</p>
+    <div className="h-[75vh] flex items-center justify-center flex-col gap-3">
+      <AlertTriangle className="size-8" />
+      <p className="text-sm">{message}</p>
+      <div className="flex gap-2">
+        {reset && (
+          <Button variant="outline" size="sm" onClick={() => reset()}>
+            <Link href="/">Try Again</Link>
+          </Button>
+        )}
+        <Button variant="tertiary" size="sm" asChild>
+          <Link href="/">Back to home</Link>
+        </Button>
+      </div>
     </div>
   );
 };
+
+export default PageError;

@@ -1,9 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
+
+import { QueryKeys } from "@/lib/constants";
 import { client } from "@/lib/rpc";
 
 export const useGetWorkspaces = () => {
   const query = useQuery({
-    queryKey: ["workspaces"],
+    queryKey: [QueryKeys.WORKSPACES],
     queryFn: async () => {
       const response = await client.api.workspaces.$get();
 
@@ -16,5 +18,6 @@ export const useGetWorkspaces = () => {
       return data;
     },
   });
+
   return query;
 };

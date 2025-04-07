@@ -1,30 +1,32 @@
 "use client";
-import { UserButton } from "@/features/auth/components/user-button";
-import { MobileSidebar } from "./MobileSidebar";
+
 import { usePathname } from "next/navigation";
+import MobileSidebar from "./mobile-sidebar";
+import UserButton from "./user-button";
 
 const pathnameMap = {
   tasks: {
-    title: "My taks",
-    description: "Monitor all your tasks here",
+    title: "Task",
+    description: "View your task here",
   },
   projects: {
-    title: "My projects",
-    description: "View tasks of your projects here",
+    title: "Projects",
+    description: "View all tasks of your projects here",
   },
 };
 
 const defaultMap = {
   title: "Home",
-  description: "Monitor all your projects, tasks and members here",
+  description: "Monitor all your projects and tasks here",
 };
 
-export const Navbar = () => {
+const Navbar = () => {
   const pathname = usePathname();
   const pathnameParts = pathname.split("/");
   const pathnameKey = pathnameParts[3] as keyof typeof pathnameMap;
 
   const { title, description } = pathnameMap[pathnameKey] || defaultMap;
+
   return (
     <nav className="pt-4 px-6 flex items-center justify-between">
       <div className="flex-col hidden lg:flex ">
@@ -36,3 +38,5 @@ export const Navbar = () => {
     </nav>
   );
 };
+
+export default Navbar;

@@ -1,21 +1,22 @@
-import { Navbar } from "@/components/Navbar";
-import { Sidebar } from "@/components/Sidebar";
-import { CreateProjectModal } from "@/features/projects/components/create-project-modal";
-import { CreateTaskModal } from "@/features/tasks/components/create-task-modal";
-import { EditTaskModal } from "@/features/tasks/components/edit-task-modal";
-import { CreateWorkspaceModal } from "@/features/workspaces/components/create-workspace-modal";
+import Navbar from "@/components/navbar";
+import Sidebar from "@/components/sidebar";
+import CreateProjectModel from "@/features/projects/components/create-project-model";
+import CreateTaskModel from "@/features/tasks/components/create-task-model";
+import EditTaskModel from "@/features/tasks/components/edit-task-model";
+import CreateWorkspaceModel from "@/features/workspaces/components/create-workspace-model";
 import React from "react";
-interface DashboardLayoutPrps {
-  children: React.ReactNode;
-}
 
-const DashboardLayout = ({ children }: DashboardLayoutPrps) => {
+type DashboardLayoutProps = {
+  children: React.ReactNode;
+};
+
+const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
     <div className="min-h-screen">
-      <CreateWorkspaceModal />
-      <CreateProjectModal />
-      <CreateTaskModal />
-      <EditTaskModal />
+      <CreateWorkspaceModel />
+      <CreateProjectModel />
+      <CreateTaskModel />
+      <EditTaskModel />
       <div className="flex w-full h-full">
         <div className="fixed left-0 top-0 hidden lg:block lg:w-[264px] lg:h-[97vh] h-full overfllow-y-auto">
           <Sidebar />

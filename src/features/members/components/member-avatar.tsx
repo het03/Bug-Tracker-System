@@ -1,22 +1,27 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
-interface MemberAvatarProps {
+type MemberAvatarProps = {
   name: string;
   className?: string;
   fallbackClassName?: string;
-}
+};
 
-export const MemberAvatar = ({
+const MemberAvatar = ({
   name,
   className,
   fallbackClassName,
 }: MemberAvatarProps) => {
   return (
-    <Avatar className={cn("size-5 transition rounded-md", className)}>
+    <Avatar
+      className={cn(
+        "size-5 transition border border-neutral-300 rounded-full",
+        className
+      )}
+    >
       <AvatarFallback
         className={cn(
-          "bg-neutral-200 font-medium text-neutral-500 flex item-center justify-center",
+          "bg-neutral-200 font-medium text-neutral-500 flex items-center justify-center",
           fallbackClassName
         )}
       >
@@ -25,3 +30,5 @@ export const MemberAvatar = ({
     </Avatar>
   );
 };
+
+export default MemberAvatar;

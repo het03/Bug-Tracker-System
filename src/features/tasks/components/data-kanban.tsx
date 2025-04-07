@@ -1,178 +1,197 @@
-import {Task, TaskStatus} from "../types";
 import {
-    DragDropContext,
-    Droppable,
-    Draggable,
-    type DropResult
-} from "@hello-pangea/dnd"
-import React, {useCallback, useEffect, useState} from "react";
-import { KanbanColumnHeader } from "./kanban-column-header";
-import { KanbanCard } from "./kanban-card";
-import { sources } from "next/dist/compiled/webpack/webpack";
+  DragDropContext,
+  Draggable,
+  Droppable,
+  DropResult,
+} from "@hello-pangea/dnd";
+import { useCallback, useEffect, useState } from "react";
 
-interface DataKanbanProps {
-    data: Task[];
-    onChange: (tasks: {$id: string, status: TaskStatus, position: number}[]) => void;
-}
+import { Task, TaskStatus } from "../types";
+import KanbanColumnHeader from "./kanban-column-header";
+import KanbanCard from "./kanban-card";
 
-export const DataKanban = ({data, onChange}: DataKanbanProps) => {
-    
-    const boards: TaskStatus[] = [
-        TaskStatus.BACKLOG,
-        TaskStatus.TODO,
-        TaskStatus.IN_PROGRESS,
-        TaskStatus.IN_REVIREW,
-        TaskStatus.DONE,
-    ];
+const boards: TaskStatus[] = [
+  TaskStatus.BACKLOG,
+  TaskStatus.TODO,
+  TaskStatus.IN_PROGRESS,
+  TaskStatus.IN_REVIEW,
+  TaskStatus.DONE,
+];
 
-    type TasksState = {
-        [key in TaskStatus]: Task[];
-    }
- 
-    const [tasks, setTasks] = useState<TasksState>(() => {
-     const initalTasks: TasksState = {
-        [TaskStatus.BACKLOG]: [],
-        [TaskStatus.TODO]: [],  
-        [TaskStatus.IN_PROGRESS]: [],
-        [TaskStatus.IN_REVIREW]: [],
-        [TaskStatus.DONE]: [],
-     }
+type TaskState = {
+  [key in TaskStatus]: Task[];
+};
 
-     data.forEach((task) => {
-        initalTasks[task.status].push(task);
-     });
+export type DataKanbanProps = {
+  data: Task[];
+  onChange: (
+    tasks: { $id: string; status: TaskStatus; position: number }[]
+  ) => void;
+};
 
-     Object.keys(initalTasks).forEach((key) => {
-        initalTasks[key as TaskStatus].sort((a, b) => a.postion - b.postion);
-     });
-     return initalTasks;
+const DataKanban = ({ data, onChange }: DataKanbanProps) => {
+  const [tasks, setTasks] = useState<TaskState>(() => {
+    const initialTask: TaskState = {
+      [TaskStatus.BACKLOG]: [],
+      [TaskStatus.TODO]: [],
+      [TaskStatus.IN_PROGRESS]: [],
+      [TaskStatus.IN_REVIEW]: [],
+      [TaskStatus.DONE]: [],
+    };
+
+    data.forEach((task) => {
+      initialTask[task.status].push(task);
     });
 
-    useEffect(() => {
-        const newTasks: TasksState = {
-            [TaskStatus.BACKLOG]: [],
-            [TaskStatus.TODO]: [],  
-            [TaskStatus.IN_PROGRESS]: [],
-            [TaskStatus.IN_REVIREW]: [],
-            [TaskStatus.DONE]: [],
-         }
-         data.forEach((task) => {
-            newTasks[task.status].push(task);
-         });
-         Object.keys(newTasks).forEach((key) => {
-            newTasks[key as TaskStatus].sort((a, b) => a.postion - b.postion);
-         });
-         setTasks(newTasks)
-    }, [data])
+    Object.keys(initialTask).forEach((status) => {
+      initialTask[status as TaskStatus].sort((a, b) => a.position - b.position);
+    });
 
-    const onDragEnd = useCallback((result: DropResult) => {
-        if(!result.destination){
-            return;
-        }
-        const {source, destination} = result;
-        const sourceStatus = source.droppableId as TaskStatus;
-        const destStatus = destination.droppableId as TaskStatus;
+    return initialTask;
+  });
 
-        let updatesPayload: {$id: string, status: TaskStatus, position: number}[] = [];
+  useEffect(() => {
+    const newTask: TaskState = {
+      [TaskStatus.BACKLOG]: [],
+      [TaskStatus.TODO]: [],
+      [TaskStatus.IN_PROGRESS]: [],
+      [TaskStatus.IN_REVIEW]: [],
+      [TaskStatus.DONE]: [],
+    };
 
-        setTasks((prevTasks) => {
-            const newTasks = {...prevTasks};
-            // Safely remove tasks from source column
+    data.forEach((task) => {
+      newTask[task.status].push(task);
+    });
 
-            const sourceColumn = [...newTasks[sourceStatus]];
-            const [movedTask] = sourceColumn.splice(source.index, 1);
+    Object.keys(newTask).forEach((status) => {
+      newTask[status as TaskStatus].sort((a, b) => a.position - b.position);
+    });
 
-            if(!movedTask){
-                console.error("No task found");
-                return prevTasks;
-            }
+    setTasks(newTask);
+  }, [data])
 
-            const updatedMovedTask = sourceStatus !== destStatus ? {...movedTask, status: destStatus} : movedTask;
-            
-            newTasks[sourceStatus] = sourceColumn;
+  const onDragEnd = useCallback((result: DropResult) => {
+    if (!result.destination) return;
 
-            const destColumn = [...newTasks[destStatus]];
-            destColumn.splice(destination.index, 0, updatedMovedTask);
-            newTasks[destStatus] = destColumn;
+    const { source, destination } = result;
 
-            updatesPayload = [];
+    const sourceStatus = source.droppableId as TaskStatus;
+    const destinationStatus = destination.droppableId as TaskStatus;
+
+    let updatesPayload: {
+      $id: string;
+      status: TaskStatus;
+      position: number;
+    }[] = [];
+    
+    setTasks((prev) => {
+      const newTasks = { ...prev };
+
+      const sourceCol = [...newTasks[sourceStatus]];
+      const [movedTask] = sourceCol.splice(source.index, 1);
+
+      if (!movedTask) {
+        console.log("Task not found");
+        return prev;
+      }
+
+      const updatedMovedTask =
+        sourceStatus !== destinationStatus
+          ? { ...movedTask, status: destinationStatus }
+          : movedTask;
+
+      newTasks[sourceStatus] = sourceCol;
+      const destinationCol = [...newTasks[destinationStatus]];
+      destinationCol.splice(destination.index, 0, updatedMovedTask);
+      newTasks[destinationStatus] = destinationCol;
+
+      updatesPayload = [];
+
+      updatesPayload.push({
+        $id: updatedMovedTask.$id,
+        status: updatedMovedTask.status,
+        position: Math.min((destination.index + 1) * 1000, 1_000_000),
+      });
+
+      newTasks[destinationStatus].forEach((task, index) => {
+        if (task && task.$id !== updatedMovedTask.$id) {
+          const newPosition = Math.min((index + 1) * 1000, 1_000_000);
+          if (task.position != newPosition) {
             updatesPayload.push({
-                $id: updatedMovedTask.$id,  
-                status: destStatus,
-                position: Math.min((destination.index +1) * 1000, 1_000_000),
-            }); 
+              $id: task.$id,
+              status: task.status,
+              position: newPosition,
+            });
+          }
+        }
+      });
 
-            newTasks[destStatus].forEach((task, index) => {
-                if (task && task.$id === updatedMovedTask.$id) {
-                    const newPosition = Math.min((index + 1) * 1000, 1_000_000);
-                    if (task.position !== newPosition) {
-                        updatesPayload.push({
-                            $id: task.$id,
-                            status: destStatus,
-                            position: newPosition,
-                        });
-                    }
-                }
-            }); // <-- Correctly closing the forEach loop
-            
-            if (sourceStatus === destStatus) {
-                newTasks[sourceStatus].forEach((task, index) => {
-                    if (task) {
-                        const newPosition = Math.min((index + 1) * 1000, 1_000_000);
-                        if (task.position !== newPosition) {
-                            updatesPayload.push({
-                                $id: task.$id,
-                                status: sourceStatus,
-                                position: newPosition,
-                            });
-                        }
-                    }
-                });
+      if (sourceStatus != destinationStatus) {
+        newTasks[sourceStatus].forEach((task, index) => {
+          if (task) {
+            const newPosition = Math.min((index + 1) * 1000, 1_000_000);
+            if (task.position != newPosition) {
+              updatesPayload.push({
+                $id: task.$id,
+                status: task.status,
+                position: newPosition,
+              });
             }
-            
-            return newTasks;
-        })
-        onChange(updatesPayload)
-    }, [onChange])
+          }
+        });
+      }
+      return newTasks;
+    });
+    onChange(updatesPayload);
+  }, [onChange]);
 
-    return (
+  return (
     <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex overflow-x-auto">
-            {boards.map((board) => {
-                return (
-                    <div key={board} className="flex-1 mx-2 bg-muted p-1.5 rounded-md min-w-[200px]">
-                       <KanbanColumnHeader
-                        board={board}
-                        taskCount={tasks[board].length}
-                        />
-                        <Droppable droppableId={board}>
-                            {(provided) => (
-                                <div
-                                {...provided.droppableProps}
-                                ref={provided.innerRef}
-                                className="min-h-[200px] py-1.5"
-                                >
-                                    {tasks[board].map((task, index) => (
-                                        <Draggable key={task.$id} draggableId={task.$id} index={index}>
-                                            {(provided) => (
-                                                <div
-                                                ref={provided.innerRef}
-                                                {...provided.draggableProps}
-                                                {...provided.dragHandleProps}
-                                                >
-                                                    <KanbanCard task={task} />
-                                                </div>
-                                            )}
-                                        </Draggable>
-                                    ))}
-                                    {provided.placeholder}
-                                </div>
-                            )} 
-                        </Droppable>
-                    </div>
-                )
-            })}
-        </div>
+      <div className="flex overflow-x-auto">
+        {boards.map((board) => {
+          return (
+            <div
+              key={board}
+              className="flex-1 mx-2 bg-muted p-1.5 rounded-md min-w-[200px]"
+            >
+              <KanbanColumnHeader
+                board={board}
+                taskCount={tasks[board].length}
+              />
+              <Droppable droppableId={board}>
+                {(provided) => (
+                  <div
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                    className="min-h-[200px] py-1.5"
+                  >
+                    {tasks[board].map((task, index) => (
+                      <Draggable
+                        key={task.$id}
+                        draggableId={task.$id}
+                        index={index}
+                      >
+                        {(provided) => (
+                          <div
+                            {...provided.dragHandleProps}
+                            {...provided.draggableProps}
+                            ref={provided.innerRef}
+                          >
+                            <KanbanCard task={task} />
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </div>
+          );
+        })}
+      </div>
     </DragDropContext>
- )
-}
+  );
+};
+
+export default DataKanban;

@@ -1,32 +1,35 @@
-"use client";
-import { Project } from "@/features/projects/types";
-import { Task } from "../types";
-import { ProjectAvatar } from "@/features/projects/components/project-avatar";
-import Link from "next/link";
-import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { ChevronRightIcon, TrashIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useDeleteTask } from "../api/use-delete-task";
-import useConfirm from "@/hooks/use-confirm";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-interface TaskBreadCrumbsProps {
+import { Button } from "@/components/ui/button";
+import ProjectAvatar from "@/features/projects/components/project-avatar";
+import { Project } from "@/features/projects/types";
+import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
+
+import { useConfirm } from "@/hooks/use-confirm";
+import { useRouter } from "next/navigation";
+import { useDeleteTask } from "../api/use-delete-task";
+import { Task } from "../types";
+
+type TaskBreadcrumbsProps = {
   project: Project;
   task: Task;
-}
+};
 
-export const TaskBreadCrumbs = ({ project, task }: TaskBreadCrumbsProps) => {
+const TaskBreadcrumbs = ({ project, task }: TaskBreadcrumbsProps) => {
   const router = useRouter();
-  const workspaceId = useWorkspaceId();
-  const { mutate, isPending } = useDeleteTask();
-  const [ConfirmDialog, confirm] = useConfirm(
+
+  const [ConfirmDialog, confirmDelete] = useConfirm(
     "Delete task",
-    "This action cannot be undone",
+    "Are you sure you want to delete this task?",
     "destructive"
   );
 
-  const handleDeleteTask = async () => {
-    const ok = await confirm();
+  const workspaceId = useWorkspaceId();
+  const { mutate, isPending } = useDeleteTask();
+
+  const handleDelete = async () => {
+    const ok = await confirmDelete();
     if (!ok) return;
 
     mutate(
@@ -38,6 +41,7 @@ export const TaskBreadCrumbs = ({ project, task }: TaskBreadCrumbsProps) => {
       }
     );
   };
+
   return (
     <div className="flex items-center gap-x-2">
       <ConfirmDialog />
@@ -54,11 +58,11 @@ export const TaskBreadCrumbs = ({ project, task }: TaskBreadCrumbsProps) => {
       <ChevronRightIcon className="size-4 lg:size-5 text-muted-foreground" />
       <p className="text-sm lg:text-lg font-semibold">{task.name}</p>
       <Button
-        onClick={handleDeleteTask}
-        disabled={isPending}
         className="ml-auto"
         variant="destructive"
         size="sm"
+        disabled={isPending}
+        onClick={handleDelete}
       >
         <TrashIcon className="size-4 lg:mr-2" />
         <span className="hidden lg:block">Delete Task</span>
@@ -66,3 +70,5 @@ export const TaskBreadCrumbs = ({ project, task }: TaskBreadCrumbsProps) => {
     </div>
   );
 };
+
+export default TaskBreadcrumbs;

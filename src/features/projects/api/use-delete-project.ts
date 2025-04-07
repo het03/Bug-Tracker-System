@@ -1,15 +1,16 @@
-import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { InferRequestType, InferResponseType } from "hono";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 import { client } from "@/lib/rpc";
-import { useRouter } from "next/navigation";
+import { QueryKeys } from "@/lib/constants";
+import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 
 type ResponseType = InferResponseType<
   (typeof client.api.projects)[":projectId"]["$delete"],
   200
 >;
-
 type RequestType = InferRequestType<
   (typeof client.api.projects)[":projectId"]["$delete"]
 >;
@@ -17,23 +18,31 @@ type RequestType = InferRequestType<
 export const useDeleteProject = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
+
+  const workspaceId = useWorkspaceId();
+
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ param }) => {
-      const response = await client.api.projects[":projectId"]["$delete"]({
+      const res = await client.api.projects[":projectId"].$delete({
         param,
       });
-      if (!response.ok) {
-        throw new Error("Somethings went wrong");
-      }
-      return await response.json();
+
+      if (!res.ok) throw new Error("Failed to delete project");
+
+      return await res.json();
     },
     onSuccess: ({ data }) => {
-      toast.success("project deleted");
-      queryClient.invalidateQueries({ queryKey: ["projects"] });
-      queryClient.invalidateQueries({ queryKey: ["project", data.$id] });
+      toast.success("Project deleted!");
+      router.push(`/workspaces/${workspaceId}`);
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.PROJECTS],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.PROJECT, data.$id],
+      });
     },
     onError: () => {
-      toast.error("Failed to delete project");
+      toast.error("Failed to delete Project");
     },
   });
 

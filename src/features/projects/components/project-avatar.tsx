@@ -1,35 +1,37 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { cn } from "@/lib/utils";
+import { ClassValue } from "clsx";
 import Image from "next/image";
 
-interface ProjectAvatarProps {
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
+
+type ProjectAvatarProps = {
   image?: string;
   name: string;
-  className?: string;
-  fallbackClassname?: string;
-}
+  className?: ClassValue;
+  fallbackClassName?: string;
+};
 
-export const ProjectAvatar = ({
-  image,
+const ProjectAvatar = ({
   name,
   className,
-  fallbackClassname,
+  image,
+  fallbackClassName,
 }: ProjectAvatarProps) => {
-  if (image) {
+  if (image)
     return (
       <div
-        className={cn("size-5 relative rounded-md overflow-hidden", className)}
+        className={cn("size-6 relative rounded-md overflow-hidden", className)}
       >
         <Image src={image} alt={name} fill className="object-cover" />
       </div>
     );
-  }
+
   return (
-    <Avatar className={cn("size-5 rounded-md", className)}>
+    <Avatar className={cn("size-6 rounded-md", className)}>
       <AvatarFallback
         className={cn(
-          "text-white bg-blue-600 font text-sm uppercase rounded-md",
-          fallbackClassname
+          "text-white bg-blue-600 font-semibold text-sm uppercase rounded-md",
+          fallbackClassName
         )}
       >
         {name[0]}
@@ -37,3 +39,5 @@ export const ProjectAvatar = ({
     </Avatar>
   );
 };
+
+export default ProjectAvatar;

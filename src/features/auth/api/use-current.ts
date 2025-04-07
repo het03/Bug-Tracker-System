@@ -1,9 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
+
+import { QueryKeys } from "@/lib/constants";
 import { client } from "@/lib/rpc";
 
 export const useCurrent = () => {
   const query = useQuery({
-    queryKey: ["current"],
+    queryKey: [QueryKeys.USER],
     queryFn: async () => {
       const response = await client.api.auth.current.$get();
 
@@ -11,9 +13,11 @@ export const useCurrent = () => {
         return null;
       }
 
-      const { data } = await response.json();
-      return data;
+      const { user } = await response.json();
+
+      return user;
     },
   });
+
   return query;
 };

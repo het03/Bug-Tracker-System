@@ -1,21 +1,23 @@
 import { cn } from "@/lib/utils";
+import type { ClassValue } from "clsx";
+import React from "react";
 
-interface DottedSeparatorProps {
-  className?: string;
+type DottedSeparatorProps = {
+  className?: ClassValue;
   color?: string;
   height?: string;
   dotSize?: string;
   gapSize?: string;
   direction?: "horizontal" | "vertical";
-}
+};
 
-export const DottedSeparator = ({
+const DottedSeparator = ({
   className,
-  color = "#d4d4d4",
-  height = "2px",
+  color = "#d4d4d8",
+  direction = "horizontal",
   dotSize = "2px",
   gapSize = "6px",
-  direction = "horizontal",
+  height = "2px",
 }: DottedSeparatorProps) => {
   const isHorizontal = direction === "horizontal";
 
@@ -40,7 +42,9 @@ export const DottedSeparator = ({
           backgroundRepeat: isHorizontal ? "repeat-x" : "repeat-y",
           backgroundPosition: "center",
         }}
-      />
+      ></div>
     </div>
   );
 };
+
+export default DottedSeparator;

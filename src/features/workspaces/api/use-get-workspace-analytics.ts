@@ -1,34 +1,34 @@
 import { useQuery } from "@tanstack/react-query";
+
+import { QueryKeys } from "@/lib/constants";
 import { client } from "@/lib/rpc";
 import { InferResponseType } from "hono";
 
-interface useGetWorkspaceAnalyticsProps {
-  workspaceId: string;
-}
-
-export type WorkspaceAnalyticResponseType = InferResponseType<
-  (typeof client.api.workspaces)[":workspaceId"]["analytics"]["$get"],
+export type ProjectAnalyticsResponseType = InferResponseType<
+  (typeof client.api.workspaces)[":workspaceId"]["analytic"]["$get"],
   200
 >;
-
 export const useGetWorkspaceAnalytics = ({
   workspaceId,
-}: useGetWorkspaceAnalyticsProps) => {
+}: {
+  workspaceId: string;
+}) => {
   const query = useQuery({
-    queryKey: ["Workspace-analytics", workspaceId],
+    queryKey: [QueryKeys.WORKSPACE_ANALYTICS, workspaceId],
     queryFn: async () => {
-      const response = await client.api.workspaces[":workspaceId"][
-        "analytics"
-      ].$get({
+      const response = await client.api.workspaces[
+        ":workspaceId"
+      ].analytic.$get({
         param: { workspaceId },
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch Workspace analytics");
-      }
+      if (!response.ok) throw new Error("Failed to fetch workspace analytics");
+
       const { data } = await response.json();
+
       return data;
     },
   });
+
   return query;
 };

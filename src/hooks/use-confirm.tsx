@@ -1,15 +1,15 @@
-import React, { useState, JSX } from "react";
+import ResponsiveModel from "@/components/responsive-model";
 import { Button, ButtonProps } from "@/components/ui/button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "@/components/ui/card";
-import { ResponsiveModal } from "@/components/responsive-modal";
+import { useState } from "react";
 
-const useConfirm = (
+export const useConfirm = (
   title: string,
   message: string,
   variant: ButtonProps["variant"] = "primary"
@@ -18,7 +18,7 @@ const useConfirm = (
     resolve: (value: boolean) => void;
   } | null>(null);
 
-  const confirm = () => {
+  const confirm = async () => {
     return new Promise<boolean>((resolve) => {
       setPromise({ resolve });
     });
@@ -30,23 +30,23 @@ const useConfirm = (
 
   const handleConfirm = () => {
     promise?.resolve(true);
-    handleClose();
+    setPromise(null);
   };
 
   const handleCancel = () => {
     promise?.resolve(false);
-    handleClose();
+    setPromise(null);
   };
 
   const ConfirmationDialog = () => (
-    <ResponsiveModal open={promise !== null} onOpenChange={handleClose}>
+    <ResponsiveModel open={promise !== null} onOpen={handleClose}>
       <Card className="w-full h-full border-none shadow-none">
         <CardContent className="pt-8">
           <CardHeader className="p-0">
             <CardTitle>{title}</CardTitle>
             <CardDescription>{message}</CardDescription>
           </CardHeader>
-          <div className="pt-4 w-full flex flex-col gap-y-2 lg:flex-row gap-x-2 items-center justify-end">
+          <div className="pt-4 w-full flex flex-col gap-2 lg:flex-row items-center justify-end">
             <Button
               onClick={handleCancel}
               variant="outline"
@@ -64,10 +64,8 @@ const useConfirm = (
           </div>
         </CardContent>
       </Card>
-    </ResponsiveModal>
+    </ResponsiveModel>
   );
 
-  return [ConfirmationDialog, confirm];
+  return [ConfirmationDialog, confirm] as const;
 };
-
-export default useConfirm;

@@ -1,14 +1,28 @@
-import { getCurrent } from "@/features/auth/queries";
+import { getCurrentUser } from "@/features/auth/queries";
+import { getWorkspace } from "@/features/workspaces/queries";
+import EditWorkspaceForm from "@/features/workspaces/components/edit-workspace-form";
 import { redirect } from "next/navigation";
-import React from "react";
-import { WorkspaceSettingsId } from "./client";
+import DeleteWorkspaceForm from "@/features/workspaces/components/delete-workspace-form";
+import ResetInviteForm from "@/features/workspaces/components/reset-invite-form";
+import { PageWithWorkspaceId } from "@/features/workspaces/types";
 
-const WorkspaceIdSettingsPage = async () => {
-  const user = await getCurrent();
-
+const WorkspaceSettingsPage = async ({
+  params: { workspaceId },
+}: PageWithWorkspaceId) => {
+  const user = await getCurrentUser();
   if (!user) redirect("/sign-in");
 
-  return <WorkspaceSettingsId />;
+  const workspace = await getWorkspace({ workspaceId });
+
+  return (
+    <div className="w-full lg:max-w-2xl">
+      <div className="flex flex-col gap-y-4">
+        <EditWorkspaceForm initialValues={workspace} />
+        <ResetInviteForm initialValues={workspace} />
+        <DeleteWorkspaceForm workspaceId={workspaceId} />
+      </div>
+    </div>
+  );
 };
 
-export default WorkspaceIdSettingsPage;
+export default WorkspaceSettingsPage;

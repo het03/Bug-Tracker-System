@@ -1,18 +1,22 @@
 "use client";
-import { cn } from "@/lib/utils";
-import { useCreateProjectModal } from "@/features/projects/hooks/use-create-project-modal";
-import { useGetProjects } from "@/features/projects/api/use-get-projects";
-import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
+
 import { usePathname } from "next/navigation";
 import { RiAddCircleFill } from "react-icons/ri";
-import Link from "next/link";
-import { ProjectAvatar } from "@/features/projects/components/project-avatar";
 
-export const Projects = () => {
-  const { open } = useCreateProjectModal();
-  const workspaceId = useWorkspaceId();
+import { useGetProjects } from "@/features/projects/api/use-get-projects";
+import ProjectAvatar from "@/features/projects/components/project-avatar";
+import { useCreateProjectModel } from "@/features/projects/hooks/use-create-project-model";
+import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
+
+const Projects = () => {
   const pathname = usePathname();
+
+  const workspaceId = useWorkspaceId();
   const { data } = useGetProjects({ workspaceId });
+
+  const { open } = useCreateProjectModel();
 
   return (
     <div className="flex flex-col gap-y-2">
@@ -44,3 +48,5 @@ export const Projects = () => {
     </div>
   );
 };
+
+export default Projects;

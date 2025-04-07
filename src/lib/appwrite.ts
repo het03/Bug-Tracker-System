@@ -1,14 +1,15 @@
 import "server-only";
-import { Client, Account, Users, Databases } from "node-appwrite";
+
+import { Client, Account, Databases, Users } from "node-appwrite";
 import { cookies } from "next/headers";
-import { AUTH_COOKIE } from "@/features/auth/constants";
+import { AUTH_COOKIE_NAME } from "./constants";
 
 export async function createSessionClient() {
   const client = new Client()
     .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
     .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!);
 
-  const session = (await cookies()).get(AUTH_COOKIE);
+  const session = cookies().get(AUTH_COOKIE_NAME);
 
   if (!session || !session.value) {
     throw new Error("Unauthorized");

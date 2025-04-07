@@ -1,13 +1,11 @@
-import { Account, Client } from "node-appwrite";
-import { cookies } from "next/headers";
-import { AUTH_COOKIE } from "./constants";
+"use server";
+
 import { createSessionClient } from "@/lib/appwrite";
 
-export const getCurrent = async () => {
+export const getCurrentUser = async () => {
   try {
     const { account } = await createSessionClient();
-
-    return await account.get();
+    return (await account.get()) ?? null;
   } catch {
     return null;
   }

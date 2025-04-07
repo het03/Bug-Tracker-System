@@ -1,9 +1,15 @@
+"use server";
 import { Query } from "node-appwrite";
+
 import { DATABASE_ID, MEMBERS_ID, WORKSPACES_ID } from "@/config";
 import { createSessionClient } from "@/lib/appwrite";
 
+import { getMember } from "../members/utils";
+import { Workspace } from "./types";
+
 export const getWorkspaces = async () => {
-  const { databases, account } = await createSessionClient();
+  const { account, databases } = await createSessionClient();
+
   const user = await account.get();
 
   const members = await databases.listDocuments(DATABASE_ID, MEMBERS_ID, [
@@ -14,12 +20,56 @@ export const getWorkspaces = async () => {
     return { documents: [], total: 0 };
   }
 
-  const workspaceIds = members.documents.map((member) => member.workspaceId);
+  const workspaceId = members.documents.map((member) => member.workspaceId);
 
-  const workspaces = await databases.listDocuments(DATABASE_ID, WORKSPACES_ID, [
+  const workspace = await databases.listDocuments(DATABASE_ID, WORKSPACES_ID, [
     Query.orderDesc("$createdAt"),
-    Query.contains("$id", workspaceIds),
+    Query.contains("$id", workspaceId),
   ]);
 
-  return workspaces;
+  return workspace;
+};
+
+export const getWorkspace = async ({
+  workspaceId,
+}: {
+  workspaceId: string;
+}) => {
+  const { account, databases } = await createSessionClient();
+
+  const user = await account.get();
+
+  const member = await getMember({
+    userId: user.$id,
+    workspaceId,
+    databases,
+  });
+
+  if (!member) throw new Error("Unauthorized");
+
+  const workspace = await databases.getDocument<Workspace>(
+    DATABASE_ID,
+    WORKSPACES_ID,
+    workspaceId
+  );
+
+  return workspace;
+};
+
+export const getWorkspaceInfo = async ({
+  workspaceId,
+}: {
+  workspaceId: string;
+}) => {
+  const { databases } = await createSessionClient();
+
+  const workspace = await databases.getDocument<Workspace>(
+    DATABASE_ID,
+    WORKSPACES_ID,
+    workspaceId
+  );
+
+  return {
+    name: workspace.name,
+  };
 };

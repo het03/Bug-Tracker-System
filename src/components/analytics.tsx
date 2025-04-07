@@ -1,50 +1,56 @@
-import { ProjectAnalyticResponseType } from "@/features/projects/api/use-get-project-analytics";
+import { ProjectAnalyticsResponseType } from "@/features/projects/api/use-get-project-analytics";
 import { ScrollArea, ScrollBar } from "./ui/scroll-area";
-import { AnalyticsCard } from "./analytics-card";
-import { DottedSeparator } from "./dotted-separator";
+import AnalyticsCard from "./analytics-card";
+import DottedSeparator from "./dotted-separator";
 
-export const Analytics = ({ data }: ProjectAnalyticResponseType) => {
+const Analytics = ({ data }: ProjectAnalyticsResponseType) => {
   return (
-    <ScrollArea className="border rounded-lg w-full whitespace-normals">
-      <div className="flex w-full flex-row">
+    <ScrollArea className="border rounded-lg w-full whitespace-nowrap shrink-0">
+      <div className="w-full flex flex-row">
         <div className="flex items-center flex-1">
           <AnalyticsCard
-            title="Total tasks"
+            title="Total Tasks"
             value={data.taskCount}
-            variant={data.taskDifference > 0 ? "up" : "down"}
-            increaseValue={data.taskDifference}
+            trend={data.taskDiff > 0 ? "up" : "down"}
+            increaseValue={data.taskDiff}
           />
+          <DottedSeparator direction="vertical" />
         </div>
         <div className="flex items-center flex-1">
           <AnalyticsCard
-            title="Assigned tasks"
+            title="Assigned Tasks"
             value={data.assignedTaskCount}
-            variant={data.assignedTaskDifference > 0 ? "up" : "down"}
-            increaseValue={data.assignedTaskDifference}
+            trend={data.assignedTaskDiff > 0 ? "up" : "down"}
+            increaseValue={data.taskDiff}
           />
+          <DottedSeparator direction="vertical" />
         </div>
         <div className="flex items-center flex-1">
           <AnalyticsCard
-            title="Completed tasks"
-            value={data.CompletedTaskCount}
-            variant={data.CompletedTaskDifference > 0 ? "up" : "down"}
-            increaseValue={data.CompletedTaskDifference}
+            title="Completed Tasks"
+            value={data.completedTaskCount}
+            trend={data.completedTaskDiff > 0 ? "up" : "down"}
+            increaseValue={data.completedTaskDiff}
           />
+          <DottedSeparator direction="vertical" />
         </div>
+
         <div className="flex items-center flex-1">
           <AnalyticsCard
-            title="Overdue tasks"
-            value={data.OverdueTaskCount}
-            variant={data.OverdueTaskDifference > 0 ? "up" : "down"}
-            increaseValue={data.OverdueTaskDifference}
+            title="Overdue Tasks"
+            value={data.overDueTaskCount}
+            trend={data.overDueTaskDiff > 0 ? "up" : "down"}
+            increaseValue={data.overDueTaskDiff}
           />
+          <DottedSeparator direction="vertical" />
         </div>
+
         <div className="flex items-center flex-1">
           <AnalyticsCard
-            title="Incomplete tasks"
-            value={data.incompleteTaskCount}
-            variant={data.incompleteTaskDifference > 0 ? "up" : "down"}
-            increaseValue={data.incompleteTaskDifference}
+            title="Incomplete Tasks"
+            value={data.inCompletedTaskCount}
+            trend={data.inCompletedTaskDiff > 0 ? "up" : "down"}
+            increaseValue={data.inCompletedTaskDiff}
           />
         </div>
       </div>
@@ -52,3 +58,5 @@ export const Analytics = ({ data }: ProjectAnalyticResponseType) => {
     </ScrollArea>
   );
 };
+
+export default Analytics;
