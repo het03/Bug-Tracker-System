@@ -5,7 +5,7 @@ import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { MenuIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
-import Sidebar from "./sidebar";
+import Sidebar from "./Sidebar";
 
 const MobileSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
