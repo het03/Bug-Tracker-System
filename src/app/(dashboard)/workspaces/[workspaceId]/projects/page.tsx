@@ -1,7 +1,7 @@
 import { getCurrent } from "@/features/auth/queries";
 import { redirect } from "next/navigation";
 import React from "react";
-import { ProjectPageClient } from "./client";
+import { ProjectPageClient } from "./[projectId]/client";
 
 const ProjectIdPage = async () => {
   const user = await getCurrent();

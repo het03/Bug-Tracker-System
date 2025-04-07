@@ -1,3 +1,4 @@
+"use client";
 import { Project } from "@/features/projects/types";
 import { Task } from "../types";
 import { ProjectAvatar } from "@/features/projects/components/project-avatar";

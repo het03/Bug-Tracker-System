@@ -1,3 +1,4 @@
+"use client";
 import { Project } from "@/features/projects/types";
 import { TaskStatus } from "../types";
 import { cn } from "@/lib/utils";

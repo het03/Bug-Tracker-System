@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { InferRequestType, InferResponseType } from "hono";
+import { InferResponseType } from "hono";
 
 import { client } from "@/lib/rpc";
 import { useRouter } from "next/navigation";
